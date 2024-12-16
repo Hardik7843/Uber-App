@@ -1,5 +1,9 @@
 import React, { useContext, useState } from 'react'
 import {Link, useNavigate} from 'react-router-dom'
+import axios from 'axios'
+import { UserDataContext } from '../context/UserContext.jsx'
+import {AXIOS} from '../lib/axios.js'
+
 
 function UserSignup()
 {
@@ -8,31 +12,30 @@ function UserSignup()
   const [ firstName, setFirstName ] = useState('')
   const [ lastName, setLastName ] = useState('')
   const [ userData, setUserData ] = useState({})
-
-  // const { user, setUser } = useContext(UserDataContext)
+  const { user, setUser } = useContext(UserDataContext)
   const navigate = useNavigate()
-
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    setUserData({
-      fullName : {
-        firstName : firstName,
-        lastName : lastName
+    const newUser = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName
       },
       email: email,
       password: password
-    })
+    }
 
-    // const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData)
+    // const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newUser,
+    const response = await AXIOS.post(`/users/register`, newUser)
 
-    // if (response.status === 200) {
-    //   const data = response.data
-    //   setUser(data.user)
-    //   localStorage.setItem('token', data.token)
-    //   navigate('/home')
-    // }
+    if (response.status === 201) {
+      const data = response.data
+      setUser(data.user)
+      // localStorage.setItem('token', data.token)
+      navigate('/home')
+    }
 
     setEmail('')
     setFirstName('')
@@ -93,6 +96,7 @@ function UserSignup()
             placeholder='password'
           />
           <button
+            type='submit'
             className='bg-[#111] text-white mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
           >Sign up</button>
         </form>

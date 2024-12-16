@@ -1,11 +1,15 @@
 import React, { useContext, useState } from 'react'
 import {Link, useNavigate} from 'react-router-dom'
+import { UserDataContext } from '../context/UserContext.jsx'
+import axios from 'axios'
+import { AXIOS } from '../lib/axios.js'
 
 const UserLogin = () => {
   
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ userData, setUserData ] = useState({})
+  const { user, setUser } = useContext(UserDataContext)
 
   // const { user, setUser } = useContext(UserDataContext)
   const navigate = useNavigate()
@@ -14,19 +18,21 @@ const UserLogin = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    setUserData({
+    const userData = {
       email: email,
       password: password
-    })
+    }
 
-    // const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData)
+    const response = await AXIOS.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData)
 
-    // if (response.status === 200) {
-    //   const data = response.data
-    //   setUser(data.user)
-    //   localStorage.setItem('token', data.token)
-    //   navigate('/home')
-    // }
+    if (response.status === 200) {
+      const data = response.data
+      // console.log(data)
+      setUser(data.user)
+      // console.log(document.cookie)
+      localStorage.setItem('token', data.token)
+      navigate('/home')
+    }
 
 
     setEmail('')
@@ -60,6 +66,7 @@ const UserLogin = () => {
             placeholder='password' 
             />
           <button
+            type='submit'
             className='bg-[#111] text-white mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
           >Login</button>
         </form>

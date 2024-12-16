@@ -1,31 +1,31 @@
 import React, { useContext, useState } from 'react'
 import {Link, useNavigate} from 'react-router-dom'
+import { AXIOS } from '../lib/axios.js'
+import { CaptainDataContext } from '../context/CaptainContext.jsx'
 
 function CaptainLogin() {
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')
-  const [ userData, setUserData ] = useState({})
-
-  // const { user, setUser } = useContext(UserDataContext)
+  const { captain, setCaptain } = useContext(CaptainDataContext)
+  
   const navigate = useNavigate()
 
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    setUserData({
+    const captainData = {
       email: email,
-      password: password
-    })
+      password : password
+    }
 
-    // const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData)
-
-    // if (response.status === 200) {
-    //   const data = response.data
-    //   setUser(data.user)
-    //   localStorage.setItem('token', data.token)
-    //   navigate('/home')
-    // }
+    const response = await AXIOS.post(`/captains/login`, captainData)
+    if (response.status === 200) {
+      const data = response.data
+      setCaptain(data.captain)
+      localStorage.setItem('token', data.token)
+      navigate('/captain-home')
+    }
 
 
     setEmail('')
@@ -59,6 +59,7 @@ function CaptainLogin() {
             placeholder='password' 
             />
           <button
+            type='submit'
             className='bg-[#111] text-white mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base'
           >Login</button>
         </form>
